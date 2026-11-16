@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CMF Speaker S — Local Console</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="CMF Speaker S local console">
+      <span class="brand-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="brand-word">CMF</span>
+      <span class="brand-model">Speaker S</span>
+    </a>
+    <div class="top-status">
+      <span class="pulse" id="pulse" data-state="scan" aria-hidden="true"></span>
+      <span id="link-state" aria-live="polite">Starting</span>
+      <button class="btn btn-quiet" id="refresh" type="button">Refresh</button>
+      <button class="btn btn-quiet" id="rescan" type="button">Rescan</button>
+    </div>
+  </header>
+
+  <div class="banner" id="banner" role="alert" hidden>
+    <span id="banner-text"></span>
+    <button class="banner-close" id="banner-close" type="button">Dismiss</button>
+  </div>
+
+  <main class="shell">
+    <section class="units" id="units" aria-label="Speakers"></section>
+
+    <section class="workspace" aria-label="Sound controls">
+      <div class="workspace-head">
+        <div>
+          <h1>Sound</h1>
+          <p class="lede" id="target-note">Settings are applied to every connected unit and read back from the device.</p>
+        </div>
+        <div class="seg" id="target-seg" role="group" aria-label="Apply changes to" hidden></div>
+      </div>
+
+      <div id="controls">
+        <section class="section" aria-labelledby="eq-title">
+          <div class="section-title">
+            <h2 id="eq-title">EQ</h2>
+            <p id="eq-state">Preset</p>
+          </div>
+          <div class="section-body">
+            <div class="preset-row" role="group" aria-label="EQ preset">
+              <button class="preset" type="button" data-preset="balanced" aria-pressed="false">Balanced</button>
+              <button class="preset" type="button" data-preset="voice" aria-pressed="false">Voice</button>
+              <button class="preset" type="button" data-preset="treble" aria-pressed="false">More treble</button>
+              <button class="preset" type="button" data-preset="bass" aria-pressed="false">More bass</button>
+              <button class="preset" type="button" data-preset="custom" aria-pressed="false">Custom</button>
+            </div>
+            <div class="bands">
+              <div class="band">
+                <label for="band-low"><span>Low · 140 Hz</span><output id="out-low" for="band-low">+0.0 dB</output></label>
+                <input id="band-low" type="range" min="-6" max="6" step="0.5" value="0">
+              </div>
+              <div class="band">
+                <label for="band-mid"><span>Mid · 980 Hz</span><output id="out-mid" for="band-mid">+0.0 dB</output></label>
+                <input id="band-mid" type="range" min="-6" max="6" step="0.5" value="0">
+              </div>
+              <div class="band">
+                <label for="band-high"><span>High · 3.4 kHz</span><output id="out-high" for="band-high">+0.0 dB</output></label>
+                <input id="band-high" type="range" min="-6" max="6" step="0.5" value="0">
+              </div>
+            </div>
+            <p class="note">Moving a band switches to Custom EQ. Range −6 to +6 dB.</p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="bass-title">
+          <div class="section-title">
+            <h2 id="bass-title">Ultra Bass</h2>
+            <p id="bass-state">Off</p>
+          </div>
+          <div class="section-body">
+            <div class="seg seg-levels" id="bass-levels" role="group" aria-label="Ultra Bass level">
+              <button type="button" data-level="0" aria-pressed="true">Off</button>
+              <button type="button" data-level="1" aria-pressed="false">1</button>
+              <button type="button" data-level="2" aria-pressed="false">2</button>
+              <button type="button" data-level="3" aria-pressed="false">3</button>
+              <button type="button" data-level="4" aria-pressed="false">4</button>
+              <button type="button" data-level="5" aria-pressed="false">5</button>
+            </div>
+            <p class="note">The speaker pairs bass with its own loudness curve; the level is reported back.</p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="room-title">
+          <div class="section-title">
+            <h2 id="room-title">Room</h2>
+            <p>How the speaker fills the space.</p>
+          </div>
+          <div class="section-body">
+            <div class="row">
+              <label class="switch">
+                <input type="checkbox" id="spatial-on">
+                <span class="switch-track" aria-hidden="true"></span>
+                <span>Spatial audio</span>
+              </label>
+              <span class="row-hint" id="spatial-state">Off</span>
+            </div>
+            <div class="row">
+              <div class="row-left">
+                <label class="switch">
+                  <input type="checkbox" id="night-on">
+                  <span class="switch-track" aria-hidden="true"></span>
+                  <span>Night mode</span>
+                </label>
+                <span class="row-hint" id="night-state">Off</span>
+              </div>
+              <label class="select-label">Auto-off
+                <select id="night-minutes">
+                  <option value="30">30 min</option>
+                  <option value="60">60 min</option>
+                  <option value="120">2 h</option>
+                  <option value="300" selected>5 h</option>
+                </select>
+              </label>
+            </div>
+            <p class="note">Night mode overrides Voice, More treble and More bass on the speaker. Spatial audio conflicts with Ultra Bass. Auto-off is available while Night mode is on. This screen shows what the device reports.</p>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="stereo-title">
+          <div class="section-title">
+            <h2 id="stereo-title">Stereo</h2>
+            <p id="stereo-state">—</p>
+          </div>
+          <div class="section-body" id="stereo-body"></div>
+        </section>
+      </div>
+
+      <div class="workspace-empty" id="workspace-empty" hidden>
+        <p>Connect a speaker to begin. Settings are applied to every connected unit and read back from the device.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footline">
+    <span>State is read back from the device after every change.</span>
+    <span class="foot-meta">BLE GATT · 127.0.0.1 · no cloud</span>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="unit-template">
+    <article class="unit">
+      <header class="unit-head">
+        <div class="unit-id">
+          <h2 class="unit-name"></h2>
+          <p class="unit-mac"></p>
+        </div>
+        <span class="unit-badge"></span>
+      </header>
+      <div class="battery-row">
+        <div class="battery-read">
+          <span class="battery-num"></span><span class="battery-sign">%</span>
+        </div>
+        <div class="battery-meter" aria-hidden="true"></div>
+      </div>
+      <div class="unit-meta">
+        <span class="meta-fw"></span>
+        <span class="meta-proto"></span>
+      </div>
+      <div class="matrix" aria-hidden="true"></div>
+      <div class="matrix-label">
+        <span>Custom EQ</span>
+        <span class="matrix-state"></span>
+      </div>
+      <ul class="chips"></ul>
+      <footer class="unit-foot">
+        <button class="btn btn-quiet find-btn" type="button">Find</button>
+        <span class="unit-link"></span>
+      </footer>
+    </article>
+  </template>
+
+  <script src="/app.js"></script>
+</body>
+</html>
